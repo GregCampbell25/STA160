@@ -1,0 +1,44 @@
+#Correlation
+install.packages("ggplot2")
+library(ggplot2)
+Variables <- subset(nba, select = c(PPG, RPG,BPG,SPG,FG,ThreeFG,APG,Class,Height))
+cor(nba$Drafted,Variables)
+plot(nba$Drafted,nba$Class,xlab="Drafted",ylab="Class")
+mean(Top10$Class)
+qplot(nba$Drafted,xlab="Drafted",ylab="Field Goal Percentage",main="Draft Order vs Field Goal Percentage", nba$FG,color=factor(nba$Class))
+Top15<-subset(nba,nba$Drafted=="1"|nba$Drafted=="2"|nba$Drafted=="3"|nba$Drafted=="4"|
+nba$Drafted=="5"|nba$Drafted=="6"|nba$Drafted=="7"|nba$Drafted=="8"|nba$Drafted=="9"|
+nba$Drafted=="10"|nba$Drafted=="11"|nba$Drafted=="12"|nba$Drafted=="13"|nba$Drafted=="14"|
+  nba$Drafted=="15")
+Top15Fresh<-subset(Top15,Top15$Class=="1")
+Top15Fresh
+Top15Soph<-subset(Top15,Top15$Class=="2")
+Top15Soph
+
+#Ordinal Regression
+install.packages("MASS")
+library("MASS")
+odregression<-polr(formula=od$Top.20~od$BPG+ od$SPG+ od$ThreeFG+ od$PPG + od$FT + od$Class+ od$FG,data=ordinal,Hess=TRUE)
+summary(odregression)
+p<-predict(odregression,damn,type="p")
+p
+p2<-predict(odregression,damn)
+p2
+od
+ElitePlayers<-subset(od,p2=="1")
+Starters<-subset(od,p2=="2")
+Bench<-subset(od,p2=="3")
+
+#Binary Logistic Regression
+mylogit <- glm(nba$Top.20 ~ nba$BPG + nba$SPG+ nba$ThreeFG+ nba$PPG + nba$FT + nba$Class+ nba$FG, data = nba, family = "binomial")
+prediction<-predict(mylogit,newdata=nba,type="response")
+nba<-damn
+prediction
+plot(nba$Drafted,prediction)
+qplot(nba$Drafted,xlab="Drafted",ylab="Probability",main="Probability of Top 20 Selection", prediction,color=factor(nba$Class))
+summary(mylogit)
+exp(coef(mylogit))
+exp(cbind(OR = coef(mylogit), confint(mylogit)))
+order(prediction,decreasing=TRUE)
+.93prediction
+nba
